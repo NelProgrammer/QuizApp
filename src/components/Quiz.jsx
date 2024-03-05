@@ -2,17 +2,39 @@ import { useState, useCallback } from 'react';
 import Dummy_Questions from '../questions.js';
 import quizCompleteImg from '../assets/quiz-complete.png';
 import QuestionTimer from './QuestionTimer.jsx';
+import Answers from './Answers.jsx';
 
 const Quiz = () => {
+  const [answerState, setAnswerState] = useState('');
   const [userAnswers, setUserAnswers] = useState([]);
-  const activeQuestionIndex = userAnswers.length;
+
+  const activeQuestionIndex =
+    answerState === '' ? userAnswers.length : userAnswers.length - 1;
   const quizIsComplete = activeQuestionIndex === Dummy_Questions.length;
 
-  const handleSelectAnswer = useCallback((selectedAnswer) => {
-    setUserAnswers((prevUserAnswers) => {
-      return [...prevUserAnswers, selectedAnswer];
-    });
-  }, []);
+  const handleSelectAnswer = useCallback(
+    (selectedAnswer) => {
+      setAnswerState('answered');
+      setUserAnswers((prevUserAnswers) => {
+        return [...prevUserAnswers, selectedAnswer];
+      });
+
+      setTimeout(() => {
+        if (
+          selectedAnswer === Dummy_Questions[activeQuestionIndex].answers[0]
+        ) {
+          setAnswerState('correct');
+        } else {
+          setAnswerState('wrong');
+        }
+
+        setTimeout(() => {
+          setAnswerState('');
+        }, 2000);
+      }, 1000);
+    },
+    [activeQuestionIndex]
+  );
 
   const handleSkipAnswer = useCallback(
     () => handleSelectAnswer(null),
@@ -32,9 +54,6 @@ const Quiz = () => {
     );
   }
 
-  const shuffledAnswers = [...Dummy_Questions[activeQuestionIndex].answers];
-  shuffledAnswers.sort((a, b) => Math.random() - 0.5);
-
   return (
     <div id="quiz">
       <div id="question">
@@ -44,15 +63,13 @@ const Quiz = () => {
           onTimeout={handleSkipAnswer}
         />
         <h2>{Dummy_Questions[activeQuestionIndex].text}</h2>
-        <ul id="answers">
-          {shuffledAnswers.map((answer) => (
-            <li key={answer} className="answer">
-              <button onClick={() => handleSelectAnswer(answer)}>
-                {answer}
-              </button>
-            </li>
-          ))}
-        </ul>
+        <Answers
+          key={activeQuestionIndex}
+          allAnswers={Dummy_Questions[activeQuestionIndex].answers}
+          selectedAnswer={userAnswers[userAnswers.length - 1]}
+          answerState={answerState}
+          onSelect={handleSelectAnswer}
+        />
       </div>
     </div>
   );
