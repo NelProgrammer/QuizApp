@@ -1,8 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import Dummy_Questions from '../questions.js';
 import quizCompleteImg from '../assets/quiz-complete.png';
-import QuestionTimer from './QuestionTimer.jsx';
-import Answers from './Answers.jsx';
+import Question from './Question.jsx';
 
 const Quiz = () => {
   const [answerState, setAnswerState] = useState('');
@@ -34,8 +33,8 @@ const Quiz = () => {
 
         setTimeout(() => {
           setAnswerState('');
-        }, 5000);
-      }, 100);
+        }, 1000);
+      }, 1000);
     },
     [activeQuestionIndex]
   );
@@ -68,21 +67,15 @@ const Quiz = () => {
 
   return (
     <div id="quiz">
-      <div id="question">
-        <QuestionTimer
-          key={activeQuestionIndex}
-          timeout={50000}
-          onTimeout={handleSkipAnswer}
-        />
-        <h2>{Dummy_Questions[activeQuestionIndex].text}</h2>
-        <Answers
-          key={activeQuestionIndex}
-          allAnswers={Dummy_Questions[activeQuestionIndex].answers}
-          selectedAnswer={userAnswers[userAnswers.length - 1]}
-          answerState={answerState}
-          onSelect={handleSelectAnswer}
-        />
-      </div>
+      <Question
+        key={activeQuestionIndex}
+        questionText={Dummy_Questions[activeQuestionIndex].text}
+        allAnswers={Dummy_Questions[activeQuestionIndex].answers}
+        answerState={answerState}
+        selectedAnswer={userAnswers[userAnswers.length - 1]}
+        onSelectAnswer={handleSelectAnswer}
+        onSkipAnswer={handleSkipAnswer}
+      />
     </div>
   );
 };
