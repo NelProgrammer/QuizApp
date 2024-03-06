@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import Dummy_Questions from '../questions.js';
 import quizCompleteImg from '../assets/quiz-complete.png';
 import QuestionTimer from './QuestionTimer.jsx';
@@ -7,6 +7,7 @@ import Answers from './Answers.jsx';
 const Quiz = () => {
   const [answerState, setAnswerState] = useState('');
   const [userAnswers, setUserAnswers] = useState([]);
+  const correctAnswers = useRef();
 
   const activeQuestionIndex =
     answerState === '' ? userAnswers.length : userAnswers.length - 1;
@@ -24,14 +25,17 @@ const Quiz = () => {
           selectedAnswer === Dummy_Questions[activeQuestionIndex].answers[0]
         ) {
           setAnswerState('correct');
+          if (!correctAnswers.current) {
+            correctAnswers.current = [...correctAnswers.current, 1];
+          }
         } else {
           setAnswerState('wrong');
         }
 
         setTimeout(() => {
           setAnswerState('');
-        }, 2000);
-      }, 1000);
+        }, 5000);
+      }, 100);
     },
     [activeQuestionIndex]
   );
@@ -41,13 +45,21 @@ const Quiz = () => {
     [handleSelectAnswer]
   );
 
-  const quizScore = 50;
   if (quizIsComplete) {
     return (
       <div id="summary">
         <img src={quizCompleteImg} alt="Trophy icon"></img>
         <h2>Quiz Completed!</h2>
-        <p>Your Score is ... {quizScore}</p>
+        {correctAnswers.current && (
+          <p>
+            Your Score is ...{' '}
+            {Math.floor(
+              correctAnswers.current.length / Dummy_Questions.length
+            ) *
+              100 +
+              '%'}
+          </p>
+        )}
 
         <button>Restart the Quiz</button>
       </div>
@@ -59,7 +71,7 @@ const Quiz = () => {
       <div id="question">
         <QuestionTimer
           key={activeQuestionIndex}
-          timeout={10000}
+          timeout={50000}
           onTimeout={handleSkipAnswer}
         />
         <h2>{Dummy_Questions[activeQuestionIndex].text}</h2>
