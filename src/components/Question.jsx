@@ -6,6 +6,16 @@ import Dummy_Questions from '../questions';
 const Question = ({ currentQuestionIndex, onSelectAnswer, onSkipAnswer }) => {
   const [answer, setAnswer] = useState({ selectedAnswer: '', isCorrect: null });
 
+  let timer = 10000;
+
+  if (answer.selectedAnswer) {
+    timer = 1000;
+  }
+
+  if (answer.isCorrect !== null) {
+    timer = 2000;
+  }
+
   const handleSelectAnswer = (answer) => {
     setAnswer({ selectedAnswer: answer, isCorrect: null });
 
@@ -31,7 +41,12 @@ const Question = ({ currentQuestionIndex, onSelectAnswer, onSkipAnswer }) => {
 
   return (
     <div is="question">
-      <QuestionTimer timeout={10000} onTimeout={onSkipAnswer} />
+      <QuestionTimer
+        key={timer}
+        timeout={timer}
+        onTimeout={answer.selectedAnswer === '' ? onSkipAnswer : null}
+        mode={answerState}
+      />
       <h2>{Dummy_Questions[currentQuestionIndex].text}</h2>
       <Answers
         allAnswers={Dummy_Questions[currentQuestionIndex].answers}
