@@ -21,6 +21,20 @@ const Quiz = () => {
     [handleSelectAnswer]
   );
 
+  const resetQuiz = () => {
+    setUserAnswers([]);
+    return (
+      <div id="quiz">
+        <Question
+          key={0}
+          currentQuestionIndex={0}
+          onSelectAnswer={handleSelectAnswer}
+          onSkipAnswer={handleSkipAnswer}
+        />
+      </div>
+    );
+  };
+
   if (quizIsComplete) {
     return (
       <div id="summary">
@@ -37,7 +51,7 @@ const Quiz = () => {
           </p>
         )}
 
-        <button>Restart the Quiz</button>
+        <button onClick={resetQuiz}>Restart the Quiz</button>
       </div>
     );
   }
