@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import Dummy_Questions from '../questions.js';
-import quizCompleteImg from '../assets/quiz-complete.png';
 import Question from './Question.jsx';
+import Summary from './Summary.jsx';
 
 const Quiz = () => {
   const [userAnswers, setUserAnswers] = useState([]);
@@ -21,38 +21,9 @@ const Quiz = () => {
     [handleSelectAnswer]
   );
 
-  const resetQuiz = () => {
-    setUserAnswers([]);
-    return (
-      <div id="quiz">
-        <Question
-          key={0}
-          currentQuestionIndex={0}
-          onSelectAnswer={handleSelectAnswer}
-          onSkipAnswer={handleSkipAnswer}
-        />
-      </div>
-    );
-  };
-
   if (quizIsComplete) {
     return (
-      <div id="summary">
-        <img src={quizCompleteImg} alt="Trophy icon"></img>
-        <h2>Quiz Completed!</h2>
-        {correctAnswers.current && (
-          <p>
-            Your Score is ...{' '}
-            {Math.floor(
-              correctAnswers.current.length / Dummy_Questions.length
-            ) *
-              100 +
-              '%'}
-          </p>
-        )}
-
-        <button onClick={resetQuiz}>Restart the Quiz</button>
-      </div>
+      <Summary userAnswers={userAnswers} setUserAnswers={setUserAnswers} />
     );
   }
 
